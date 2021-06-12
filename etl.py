@@ -13,12 +13,12 @@ from sql_queries import *
 
 
 def process_song_file(cur: Any, filepath: str):
-    
+
     '''
     Process song files and insert data from these files into into its corresponding table
 
             Parameters:
-                    cur (string): connection string cursor 
+                    cur (string): connection string cursor
                     filepath (int): path to multiple song files in JSON format
 
     '''
@@ -37,7 +37,7 @@ def process_song_file(cur: Any, filepath: str):
 
 
 def process_log_file(cur: Any, filepath: str):
-    
+
     '''
     Process log files and insert data from these files into into its corresponding table
 
@@ -64,17 +64,19 @@ def process_log_file(cur: Any, filepath: str):
 
     # create a dataframe with the wanted information
     # CREATE A DICTIONARY FOR ALL THE TIME PARTS
-    
+
     time_df = pd.DataFrame(
         {"timestamp": timestamps, "hour": hours, "day": days, "week": weeks, "month": months, "year": years, "weekday": weekdays})
 
-    
+
     #ITERRATE EACH ROW OF LOG FILE
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
 
     # load user table
     user_df = df[["userId" , "firstName" , "lastName" , "gender" , "level"]]
+
+    #remove duplicates
     user_df = user_df.drop_duplicates()
 
     # insert user records
@@ -99,14 +101,14 @@ def process_log_file(cur: Any, filepath: str):
 
 
 def process_data(cur: Any, conn: Any, filepath: str, func: Any):
-    
+
     '''
     This function act as a file controlling mechanism where it checks for following conditions and iterates over the file:
-    
+
             Condition 1 : get all files matching extension from directory
-            
+
             Condition 2 : get total number of files found
-            
+
             Condition 3 : iterate over files and process
 
             Parameters:
@@ -116,7 +118,7 @@ def process_data(cur: Any, conn: Any, filepath: str, func: Any):
                     func (string) : function name (process log file, process song files)
 
     '''
-    
+
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
